@@ -36,7 +36,7 @@ public abstract class SmoothPagedView extends PagedView {
     private Interpolator mScrollInterpolator;
 
     private static class WorkspaceOvershootInterpolator implements Interpolator {
-        private static final float DEFAULT_TENSION = 1.3f;
+        private static final float DEFAULT_TENSION = 0.9f;
         private float mTension;
 
         public WorkspaceOvershootInterpolator() {
@@ -132,7 +132,8 @@ public abstract class SmoothPagedView extends PagedView {
         final int screenDelta = Math.max(1, Math.abs(whichPage - mCurrentPage));
         final int newX = getChildOffset(whichPage) - getRelativeChildOffset(whichPage);
         final int delta = newX - mUnboundedScrollX;
-        int duration = (screenDelta + 1) * 100;
+        final int durationMultiplier = 60;
+        int duration = (screenDelta + 1) * durationMultiplier;
 
         if (!mScroller.isFinished()) {
             mScroller.abortAnimation();
@@ -148,7 +149,7 @@ public abstract class SmoothPagedView extends PagedView {
         if (velocity > 0) {
             duration += (duration / (velocity / mBaseLineFlingVelocity)) * mFlingVelocityInfluence;
         } else {
-            duration += 100;
+            duration += durationMultiplier;
         }
 
         snapToPage(whichPage, delta, duration);
